@@ -3,7 +3,7 @@
 <suite name="OnlineLibraryTestSuite">
     <test name="AllTests">
         <packages>
-            <package name="com.library.**"/>
+            <package name="test.java.com.library.**"/>
         </packages>
     </test>
 </suite>
