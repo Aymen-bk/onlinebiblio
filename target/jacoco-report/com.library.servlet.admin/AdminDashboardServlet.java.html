@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AdminDashboardServlet.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Public Online Library</a> &gt; <a href="index.source.html" class="el_package">com.library.servlet.admin</a> &gt; <span class="el_source">AdminDashboardServlet.java</span></div><h1>AdminDashboardServlet.java</h1><pre class="source lang-java linenums">package com.library.servlet.admin;
+
+import com.library.dao.BookDAO;
+import com.library.dao.BorrowingDAO;
+import com.library.dao.UserDAO;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
+
+<span class="nc" id="L13">public class AdminDashboardServlet extends HttpServlet {</span>
+    private BookDAO bookDAO;
+    private UserDAO userDAO;
+    private BorrowingDAO borrowingDAO;
+    
+    @Override
+    public void init() throws ServletException {
+<span class="nc" id="L20">        bookDAO = new BookDAO();</span>
+<span class="nc" id="L21">        userDAO = new UserDAO();</span>
+<span class="nc" id="L22">        borrowingDAO = new BorrowingDAO();</span>
+<span class="nc" id="L23">    }</span>
+    
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        
+        // Update overdue status
+<span class="nc" id="L30">        borrowingDAO.updateOverdueStatus();</span>
+        
+        // Get statistics
+<span class="nc" id="L33">        int totalBooks = bookDAO.getTotalBooks();</span>
+<span class="nc" id="L34">        int availableBooks = bookDAO.getAvailableBooks();</span>
+<span class="nc" id="L35">        int totalUsers = userDAO.getTotalUsers();</span>
+<span class="nc" id="L36">        int activeBorrowings = borrowingDAO.getActiveBorrowingsCount();</span>
+<span class="nc" id="L37">        int overdueBorrowings = borrowingDAO.getOverdueBorrowingsCount();</span>
+        
+<span class="nc" id="L39">        request.setAttribute(&quot;totalBooks&quot;, totalBooks);</span>
+<span class="nc" id="L40">        request.setAttribute(&quot;availableBooks&quot;, availableBooks);</span>
+<span class="nc" id="L41">        request.setAttribute(&quot;totalUsers&quot;, totalUsers);</span>
+<span class="nc" id="L42">        request.setAttribute(&quot;activeBorrowings&quot;, activeBorrowings);</span>
+<span class="nc" id="L43">        request.setAttribute(&quot;overdueBorrowings&quot;, overdueBorrowings);</span>
+        
+<span class="nc" id="L45">        request.getRequestDispatcher(&quot;/admin/dashboard.jsp&quot;).forward(request, response);</span>
+<span class="nc" id="L46">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

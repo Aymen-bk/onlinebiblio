@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>DatabaseConnection.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Public Online Library</a> &gt; <a href="index.source.html" class="el_package">com.library.util</a> &gt; <span class="el_source">DatabaseConnection.java</span></div><h1>DatabaseConnection.java</h1><pre class="source lang-java linenums">package com.library.util;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+
+<span class="nc" id="L7">public class DatabaseConnection {</span>
+    private static final String URL = &quot;jdbc:mysql://localhost:3306/online_library?useSSL=false&amp;serverTimezone=UTC&quot;;
+    private static final String USERNAME = &quot;tarik&quot;;
+    private static final String PASSWORD = &quot;tarik123&quot;;
+
+    // Connexion de test pour les tests unitaires
+<span class="fc" id="L13">    private static Connection testConnection = null;</span>
+
+    static {
+        try {
+<span class="fc" id="L17">            Class.forName(&quot;com.mysql.cj.jdbc.Driver&quot;);</span>
+<span class="nc" id="L18">        } catch (ClassNotFoundException e) {</span>
+<span class="nc" id="L19">            throw new RuntimeException(&quot;MySQL JDBC Driver not found&quot;, e);</span>
+<span class="fc" id="L20">        }</span>
+<span class="fc" id="L21">    }</span>
+
+    public static Connection getConnection() throws SQLException {
+<span class="pc bpc" id="L24" title="1 of 2 branches missed.">        if (testConnection != null) {</span>
+<span class="fc" id="L25">            return testConnection; // retourne la connexion mock pour les tests</span>
+        }
+<span class="nc" id="L27">        return DriverManager.getConnection(URL, USERNAME, PASSWORD);</span>
+    }
+
+    public static void setTestConnection(Connection conn) {
+<span class="fc" id="L31">        testConnection = conn; // permet d’injecter une connexion mock</span>
+<span class="fc" id="L32">    }</span>
+
+    public static void closeConnection(Connection conn) {
+<span class="nc bnc" id="L35" title="All 2 branches missed.">        if (conn != null) {</span>
+            try {
+<span class="nc" id="L37">                conn.close();</span>
+<span class="nc" id="L38">            } catch (SQLException e) {</span>
+<span class="nc" id="L39">                e.printStackTrace();</span>
+<span class="nc" id="L40">            }</span>
+        }
+<span class="nc" id="L42">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>
