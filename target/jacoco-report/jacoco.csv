@@ -1,8 +1,8 @@
 GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_COVERED,LINE_MISSED,LINE_COVERED,COMPLEXITY_MISSED,COMPLEXITY_COVERED,METHOD_MISSED,METHOD_COVERED
-Public Online Library,com.library.model,Book,14,101,0,2,6,41,4,29,4,28
+Public Online Library,com.library.model,Book,6,109,0,2,2,45,2,31,2,30
 Public Online Library,com.library.model,User,0,82,0,0,0,33,0,19,0,19
 Public Online Library,com.library.model,Borrowing,7,100,0,2,3,40,2,27,2,26
-Public Online Library,com.library.dao,BookDAO,613,0,46,0,168,0,37,0,14,0
+Public Online Library,com.library.dao,BookDAO,349,264,33,13,105,63,27,10,8,6
 Public Online Library,com.library.dao,UserDAO,370,3,40,0,102,1,29,1,9,1
 Public Online Library,com.library.dao,BorrowingDAO,434,0,46,0,121,0,34,0,11,0
 Public Online Library,com.library.servlet.admin,AdminBookServlet,222,0,14,0,55,0,17,0,10,0
@@ -10,7 +10,7 @@ Public Online Library,com.library.servlet.admin,AdminBorrowingServlet,28,0,0,0,8
 Public Online Library,com.library.servlet.admin,AdminDashboardServlet,75,0,0,0,18,0,3,0,3,0
 Public Online Library,com.library.servlet.admin,AdminUserServlet,60,0,4,0,17,0,7,0,5,0
 Public Online Library,com.library.util,PasswordUtil,3,8,0,0,1,2,1,2,1,2
-Public Online Library,com.library.util,DatabaseConnection,29,0,2,0,13,0,5,0,4,0
+Public Online Library,com.library.util,DatabaseConnection,24,14,3,1,10,8,4,3,2,3
 Public Online Library,com.library.filter,AuthFilter,60,0,6,0,18,0,7,0,4,0
 Public Online Library,com.library.filter,AdminFilter,66,0,8,0,22,0,8,0,4,0
 Public Online Library,com.library.servlet,BookDetailServlet,83,0,10,0,25,0,8,0,3,0

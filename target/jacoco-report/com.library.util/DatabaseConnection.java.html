@@ -8,27 +8,37 @@ import java.sql.SQLException;
     private static final String URL = &quot;jdbc:mysql://localhost:3306/online_library?useSSL=false&amp;serverTimezone=UTC&quot;;
     private static final String USERNAME = &quot;tarik&quot;;
     private static final String PASSWORD = &quot;tarik123&quot;;
-    
+
+    // Connexion de test pour les tests unitaires
+<span class="fc" id="L13">    private static Connection testConnection = null;</span>
+
     static {
         try {
-<span class="nc" id="L14">            Class.forName(&quot;com.mysql.cj.jdbc.Driver&quot;);</span>
-<span class="nc" id="L15">        } catch (ClassNotFoundException e) {</span>
-<span class="nc" id="L16">            throw new RuntimeException(&quot;MySQL JDBC Driver not found&quot;, e);</span>
-<span class="nc" id="L17">        }</span>
-<span class="nc" id="L18">    }</span>
-    
+<span class="fc" id="L17">            Class.forName(&quot;com.mysql.cj.jdbc.Driver&quot;);</span>
+<span class="nc" id="L18">        } catch (ClassNotFoundException e) {</span>
+<span class="nc" id="L19">            throw new RuntimeException(&quot;MySQL JDBC Driver not found&quot;, e);</span>
+<span class="fc" id="L20">        }</span>
+<span class="fc" id="L21">    }</span>
+
     public static Connection getConnection() throws SQLException {
-<span class="nc" id="L21">        return DriverManager.getConnection(URL, USERNAME, PASSWORD);</span>
-    }
-    
-    public static void closeConnection(Connection conn) {
-<span class="nc bnc" id="L25" title="All 2 branches missed.">        if (conn != null) {</span>
-            try {
-<span class="nc" id="L27">                conn.close();</span>
-<span class="nc" id="L28">            } catch (SQLException e) {</span>
-<span class="nc" id="L29">                e.printStackTrace();</span>
-<span class="nc" id="L30">            }</span>
+<span class="pc bpc" id="L24" title="1 of 2 branches missed.">        if (testConnection != null) {</span>
+<span class="fc" id="L25">            return testConnection; // retourne la connexion mock pour les tests</span>
         }
-<span class="nc" id="L32">    }</span>
+<span class="nc" id="L27">        return DriverManager.getConnection(URL, USERNAME, PASSWORD);</span>
+    }
+
+    public static void setTestConnection(Connection conn) {
+<span class="fc" id="L31">        testConnection = conn; // permet d’injecter une connexion mock</span>
+<span class="fc" id="L32">    }</span>
+
+    public static void closeConnection(Connection conn) {
+<span class="nc bnc" id="L35" title="All 2 branches missed.">        if (conn != null) {</span>
+            try {
+<span class="nc" id="L37">                conn.close();</span>
+<span class="nc" id="L38">            } catch (SQLException e) {</span>
+<span class="nc" id="L39">                e.printStackTrace();</span>
+<span class="nc" id="L40">            }</span>
+        }
+<span class="nc" id="L42">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>
