@@ -9,90 +9,96 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 public class BookDAO {
     private static final Logger logger = LoggerFactory.getLogger(BookDAO.class);
 
+    // Columns used in extractBookFromResultSet
+    private static final String BOOK_COLUMNS = """
+        id, title, author, isbn, category, description,
+        publisher, published_year, pages, language,
+        quantity, available_quantity, cover_image,
+        created_at, updated_at
+    """;
+
     public List<Book> findAll() {
         List<Book> books = new ArrayList<>();
-        String sql = "SELECT * FROM books ORDER BY title";
-        
+        String sql = "SELECT " + BOOK_COLUMNS + " FROM books ORDER BY title";
+
         try (Connection conn = DatabaseConnection.getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
-            
+
             while (rs.next()) {
                 books.add(extractBookFromResultSet(rs));
             }
         } catch (SQLException e) {
             logger.error("Failed to fetch all books", e);
-            return null;
+            return new ArrayList<>();
         }
         return books;
     }
-    
+
     public Book findById(int id) {
-        String sql = "SELECT * FROM books WHERE id = ?";
+        String sql = "SELECT " + BOOK_COLUMNS + " FROM books WHERE id = ?";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
-            
+
             stmt.setInt(1, id);
-            ResultSet rs = stmt.executeQuery();
-            
-            if (rs.next()) {
-                return extractBookFromResultSet(rs);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return extractBookFromResultSet(rs);
+                }
             }
         } catch (SQLException e) {
             logger.error("Failed to find book with ID: " + id, e);
-            return null;
         }
         return null;
     }
-    
+
     public List<Book> search(String keyword) {
         List<Book> books = new ArrayList<>();
-        String sql = "SELECT * FROM books WHERE title LIKE ? OR author LIKE ? OR category LIKE ? OR isbn LIKE ? ORDER BY title";
-        
+        String sql = "SELECT " + BOOK_COLUMNS + " FROM books WHERE title LIKE ? OR author LIKE ? OR category LIKE ? OR isbn LIKE ? ORDER BY title";
+
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
-            
+
             String searchPattern = "%" + keyword + "%";
             stmt.setString(1, searchPattern);
             stmt.setString(2, searchPattern);
             stmt.setString(3, searchPattern);
             stmt.setString(4, searchPattern);
-            
-            ResultSet rs = stmt.executeQuery();
-            while (rs.next()) {
-                books.add(extractBookFromResultSet(rs));
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    books.add(extractBookFromResultSet(rs));
+                }
             }
         } catch (SQLException e) {
             logger.error("Failed to search books with keyword: {}", keyword, e);
-            return null;
+            return new ArrayList<>();
         }
         return books;
     }
-    
+
     public List<Book> findByCategory(String category) {
         List<Book> books = new ArrayList<>();
-        String sql = "SELECT * FROM books WHERE category = ? ORDER BY title";
-        
+        String sql = "SELECT " + BOOK_COLUMNS + " FROM books WHERE category = ? ORDER BY title";
+
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
-            
+
             stmt.setString(1, category);
-            ResultSet rs = stmt.executeQuery();
-            
-            while (rs.next()) {
-                books.add(extractBookFromResultSet(rs));
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    books.add(extractBookFromResultSet(rs));
+                }
             }
         } catch (SQLException e) {
             logger.error("Failed to find books by category: {}", category, e);
-            return null;
+            return new ArrayList<>();
         }
         return books;
     }
-    
     public List<String> getAllCategories() {
         List<String> categories = new ArrayList<>();
         String sql = "SELECT DISTINCT category FROM books ORDER BY category";
@@ -106,7 +112,7 @@ public class BookDAO {
             }
         } catch (SQLException e) {
             logger.error("Failed to load categories", e);
-            return null;
+            return new ArrayList<>();
         }
         return categories;
     }
