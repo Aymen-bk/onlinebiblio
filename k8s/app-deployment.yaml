@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: online-library
+  namespace: online-library
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: online-library
+  template:
+    metadata:
+      labels:
+        app: online-library
+    spec:
+      containers:
+        - name: online-library
+          image: tarik123abc/onlinebiblio:latest  # your Docker Hub image
+          ports:
+            - containerPort: 8080
+          env:
+            - name: DB_URL
+              value: "jdbc:mysql://mysql:3306/online_library"
+            - name: DB_USERNAME
+              value: "root"
+            - name: DB_PASSWORD
+              value: "tarik123"

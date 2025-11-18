@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8
+    container_name: mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root123
+      MYSQL_DATABASE: online_library
+      MYSQL_USER: tarik
+      MYSQL_PASSWORD: tarik123
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+
+  online-library:
+    image: tarik123abc/onlinebiblio:latest
+    container_name: online-library
+    restart: always
+    ports:
+      - "8081:8082"
+    environment:
+      DB_URL: jdbc:mysql://mysql:3306/online_library?useSSL=false&serverTimezone=UTC
+      DB_USERNAME: tarik
+      DB_PASSWORD: tarik123
+    depends_on:
+      - mysql
+
+volumes:
+  mysql-data:

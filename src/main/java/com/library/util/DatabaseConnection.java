@@ -9,12 +9,12 @@ import java.util.logging.Logger;
 public class DatabaseConnection {
 
     // Database URL (can still be hard-coded if it's not sensitive)
-    private static final String URL = "jdbc:mysql://localhost:3306/online_library?useSSL=false&serverTimezone=UTC";
+    private static final String URL  = "jdbc:mysql://host.docker.internal:3306/online_library?useSSL=false&serverTimezone=UTC";
     private static final Logger LOGGER = Logger.getLogger(DatabaseConnection.class.getName());
 
     // Load credentials from environment variables
-    private static final String USERNAME = System.getenv("DB_USERNAME");
-    private static final String PASSWORD = System.getenv("DB_PASSWORD");
+    private static final String USERNAME = "tarik";
+    private static final String PASSWORD = "tarik123";
 
     // Connection for unit tests (mock)
     private static Connection testConnection = null;
