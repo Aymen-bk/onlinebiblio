@@ -6,9 +6,13 @@ import com.library.util.DatabaseConnection;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 public class BookDAO {
-    
+    private static final Logger logger = LoggerFactory.getLogger(BookDAO.class);
+
     public List<Book> findAll() {
         List<Book> books = new ArrayList<>();
         String sql = "SELECT * FROM books ORDER BY title";
@@ -21,7 +25,8 @@ public class BookDAO {
                 books.add(extractBookFromResultSet(rs));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Failed to fetch all books", e);
+            return null;
         }
         return books;
     }
@@ -38,7 +43,8 @@ public class BookDAO {
                 return extractBookFromResultSet(rs);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Failed to find book with ID: " + id, e);
+            return null;
         }
         return null;
     }
@@ -61,7 +67,8 @@ public class BookDAO {
                 books.add(extractBookFromResultSet(rs));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Failed to search books with keyword: {}", keyword, e);
+            return null;
         }
         return books;
     }
@@ -80,7 +87,8 @@ public class BookDAO {
                 books.add(extractBookFromResultSet(rs));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Failed to find books by category: {}", category, e);
+            return null;
         }
         return books;
     }
@@ -97,7 +105,8 @@ public class BookDAO {
                 categories.add(rs.getString("category"));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Failed to load categories", e);
+            return null;
         }
         return categories;
     }
@@ -131,7 +140,8 @@ public class BookDAO {
                 return true;
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Failed to create book: {}", book.getTitle(), e);
+            return false;
         }
         return false;
     }
@@ -158,9 +168,9 @@ public class BookDAO {
             
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Failed to update book ID: {}", book.getId(), e);
+            return false;
         }
-        return false;
     }
     
     public boolean delete(int id) {
@@ -171,9 +181,9 @@ public class BookDAO {
             stmt.setInt(1, id);
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Failed to delete book ID: {}", id, e);
+            return false;
         }
-        return false;
     }
     
     public boolean decreaseAvailableQuantity(int bookId) {
@@ -184,9 +194,9 @@ public class BookDAO {
             stmt.setInt(1, bookId);
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Failed to decrease available quantity of book ID: {}", bookId, e);
+            return false;
         }
-        return false;
     }
     
     public boolean increaseAvailableQuantity(int bookId) {
@@ -197,9 +207,9 @@ public class BookDAO {
             stmt.setInt(1, bookId);
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Failed to increase available quantity of book ID: {}", bookId, e);
+            return false;
         }
-        return false;
     }
     
     public int getTotalBooks() {
@@ -212,7 +222,7 @@ public class BookDAO {
                 return rs.getInt(1);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Failed to count total books", e);
         }
         return 0;
     }
@@ -227,7 +237,7 @@ public class BookDAO {
                 return rs.getInt(1);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Failed to count available books", e);
         }
         return 0;
     }

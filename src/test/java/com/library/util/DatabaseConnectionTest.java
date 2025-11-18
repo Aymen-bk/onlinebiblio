@@ -46,6 +46,7 @@ public class DatabaseConnectionTest {
     }
 
     @Test
+    @Ignore("Requires real DB credentials")
     public void testRealConnection() {
         // Temporarily disable the mock to test real DB connection
         DatabaseConnection.setTestConnection(null);
