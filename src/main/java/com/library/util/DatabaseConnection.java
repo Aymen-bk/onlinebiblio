@@ -3,11 +3,14 @@ package com.library.util;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class DatabaseConnection {
 
     // Database URL (can still be hard-coded if it's not sensitive)
     private static final String URL = "jdbc:mysql://localhost:3306/online_library?useSSL=false&serverTimezone=UTC";
+    private static final Logger LOGGER = Logger.getLogger(DatabaseConnection.class.getName());
 
     // Load credentials from environment variables
     private static final String USERNAME = System.getenv("DB_USERNAME");
@@ -45,7 +48,7 @@ public class DatabaseConnection {
             try {
                 conn.close();
             } catch (SQLException e) {
-                e.printStackTrace();
+                LOGGER.log(Level.SEVERE, "Failed to close database connection", e);
             }
         }
     }
