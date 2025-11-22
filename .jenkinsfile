@@ -6,6 +6,7 @@ pipeline {
         DB_USERNAME = "tarik"
         DB_PASSWORD = "tarik123"
         DB_URL = "jdbc:mysql://host.docker.internal:3306/online_library?useSSL=false&serverTimezone=UTC"
+        KUBECONFIG = "C:\\Users\\PC\\.kube\\config"
 
         // Docker
         DOCKER_IMAGE = "onlinebiblio"
@@ -113,18 +114,18 @@ pipeline {
 }
 
         stage('Verify Deployment') {
-    steps {
-        echo "Verifying Kubernetes deployment..."
-        bat "minikube kubectl -- get pods -n ${K8S_NAMESPACE}"
-        bat "minikube kubectl -- get services -n ${K8S_NAMESPACE}"
+            steps {
+                echo "Verifying Kubernetes deployment..."
+                bat "minikube kubectl -- get pods -n ${K8S_NAMESPACE}"
+                bat "minikube kubectl -- get services -n ${K8S_NAMESPACE}"
 
-        echo "=========================================="
-        echo "🚀 APPLICATION URL:"
-        echo "=========================================="
-        bat "minikube service ${K8S_SERVICE_NAME} -n ${K8S_NAMESPACE} --url"
-        echo "=========================================="
-    }
-}
+                echo "=========================================="
+                echo "🚀 APPLICATION URL:"
+                echo "http://192.168.49.2:30080  (NodePort, IP fixe de Minikube)"
+                echo "=========================================="
+            }
+        }
+
     }
 
     post {
