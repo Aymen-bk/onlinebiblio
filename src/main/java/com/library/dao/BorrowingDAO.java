@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class BorrowingDAO {
@@ -37,7 +38,7 @@ public class BorrowingDAO {
             }
         } catch (SQLException e) {
             logger.error("Failed to create borrowing for user {} and book {}", borrowing.getUserId(), borrowing.getBookId(), e);
-            throw new RuntimeException("Unable to create borrowing", e);
+            throw new IllegalArgumentException("Unable to create borrowing", e);
         }
         return false;
     }
@@ -64,7 +65,7 @@ public class BorrowingDAO {
 
         } catch (SQLException e) {
             logger.error("Failed to load borrowings for user ID {}", userId, e);
-            return null;
+            return Collections.emptyList();
         }
 
         return borrowings;
@@ -92,7 +93,7 @@ public class BorrowingDAO {
 
         } catch (SQLException e) {
             logger.error("Failed to load all borrowings", e);
-            return null;
+            return Collections.emptyList();
         }
 
         return borrowings;

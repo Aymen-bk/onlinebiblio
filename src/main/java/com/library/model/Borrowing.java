@@ -20,7 +20,9 @@ public class Borrowing {
     private String bookTitle;
     private String bookAuthor;
 
-    public Borrowing() {}
+    public Borrowing() {
+        //create a constructor by default
+    }
 
     // Getters and Setters
     public int getId() {

@@ -19,7 +19,9 @@ public class Book {
     private Timestamp createdAt;
     private Timestamp updatedAt;
     
-    public Book() {}
+    public Book() {
+        //create a constructor by default
+    }
     
     // Getters and Setters
     public int getId() {
