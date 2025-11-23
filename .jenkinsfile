@@ -58,7 +58,7 @@ pipeline {
                     "-Dsonar.java.libraries=target/dependency/*.jar " +
                     "-Dsonar.coverage.jacoco.xmlReportPaths=target/jacoco-report/jacoco.xml " +
                     "-Dsonar.host.url=http://localhost:9000 " +
-                    "-Dsonar.token=squ_cc405e5b0327cd53815f484b967f8420f2520a7d"
+                    "-Dsonar.token=squ_2bdfa87eef4adf7312650e24d5f03e934144b9e8"
             }
         }
 
