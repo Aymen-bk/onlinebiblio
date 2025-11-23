@@ -9,8 +9,8 @@ import java.util.logging.Logger;
 <span class="nc" id="L9">public class DatabaseConnection {</span>
 
     // Database URL (can still be hard-coded if it's not sensitive)
-    //private static final String URL  = &quot;jdbc:mysql://host.docker.internal:3306/online_library?useSSL=false&amp;serverTimezone=UTC&quot;;
-    private static final String URL  = &quot;jdbc:mysql://localhost:3306/online_library?useSSL=false&amp;serverTimezone=UTC&quot;;
+    private static final String URL  = &quot;jdbc:mysql://host.docker.internal:3306/online_library?useSSL=false&amp;serverTimezone=UTC&quot;;
+    //private static final String URL  = &quot;jdbc:mysql://localhost:3306/online_library?useSSL=false&amp;serverTimezone=UTC&quot;;
 <span class="fc" id="L14">    private static final Logger LOGGER = Logger.getLogger(DatabaseConnection.class.getName());</span>
 
     // Load credentials from environment variables
