@@ -1,0 +1,17 @@
+
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: online-library-monitor
+  namespace: monitoring
+spec:
+  selector:
+    matchLabels:
+      app: online-library
+  endpoints:
+    - port: http
+      path: /metrics
+      interval: 15s
+  namespaceSelector:
+    matchNames:
+      - online-library
