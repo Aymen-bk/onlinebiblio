@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>BookDAO.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">online-library</a> &gt; <a href="index.source.html" class="el_package">com.library.dao</a> &gt; <span class="el_source">BookDAO.java</span></div><h1>BookDAO.java</h1><pre class="source lang-java linenums">package com.library.dao;
+
+import com.library.model.Book;
+import com.library.util.DatabaseConnection;
+
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+<span class="fc" id="L12">public class BookDAO {</span>
+<span class="fc" id="L13">    private static final Logger logger = LoggerFactory.getLogger(BookDAO.class);</span>
+    private static final String SELECT = &quot;SELECT &quot;;  // Compliant
+
+    // Columns used in extractBookFromResultSet
+    private static final String BOOK_COLUMNS = &quot;&quot;&quot;
+        id, title, author, isbn, category, description,
+        publisher, published_year, pages, language,
+        quantity, available_quantity, cover_image,
+        created_at, updated_at
+    &quot;&quot;&quot;;
+
+    public List&lt;Book&gt; findAll() {
+<span class="nc" id="L25">        List&lt;Book&gt; books = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L26">        String sql = SELECT + BOOK_COLUMNS + &quot; FROM books ORDER BY title&quot;;</span>
+
+<span class="nc" id="L28">        try (Connection conn = DatabaseConnection.getConnection();</span>
+<span class="nc" id="L29">             Statement stmt = conn.createStatement();</span>
+<span class="nc" id="L30">             ResultSet rs = stmt.executeQuery(sql)) {</span>
+
+<span class="nc bnc" id="L32" title="All 2 branches missed.">            while (rs.next()) {</span>
+<span class="nc" id="L33">                books.add(extractBookFromResultSet(rs));</span>
+            }
+<span class="nc" id="L35">        } catch (SQLException e) {</span>
+<span class="nc" id="L36">            logger.error(&quot;Failed to fetch all books&quot;, e);</span>
+<span class="nc" id="L37">            return new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L38">        }</span>
+<span class="nc" id="L39">        return books;</span>
+    }
+
+    public Book findById(int id) {
+<span class="fc" id="L43">        String sql = SELECT + BOOK_COLUMNS + &quot; FROM books WHERE id = ?&quot;;</span>
+<span class="fc" id="L44">        try (Connection conn = DatabaseConnection.getConnection();</span>
+<span class="fc" id="L45">             PreparedStatement stmt = conn.prepareStatement(sql)) {</span>
+
+<span class="fc" id="L47">            stmt.setInt(1, id);</span>
+<span class="fc" id="L48">            try (ResultSet rs = stmt.executeQuery()) {</span>
+<span class="fc bfc" id="L49" title="All 2 branches covered.">                if (rs.next()) {</span>
+<span class="fc" id="L50">                    return extractBookFromResultSet(rs);</span>
+                }
+<span class="pc bpc" id="L52" title="1 of 2 branches missed.">            }</span>
+<span class="pc bpc" id="L53" title="2 of 4 branches missed.">        } catch (SQLException e) {</span>
+<span class="fc" id="L54">            logger.error(&quot;Failed to find book with ID: &quot; + id, e);</span>
+<span class="fc" id="L55">        }</span>
+<span class="fc" id="L56">        return null;</span>
+    }
+
+    public List&lt;Book&gt; search(String keyword) {
+<span class="nc" id="L60">        List&lt;Book&gt; books = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L61">        String sql = SELECT + BOOK_COLUMNS + &quot; FROM books WHERE title LIKE ? OR author LIKE ? OR category LIKE ? OR isbn LIKE ? ORDER BY title&quot;;</span>
+
+<span class="nc" id="L63">        try (Connection conn = DatabaseConnection.getConnection();</span>
+<span class="nc" id="L64">             PreparedStatement stmt = conn.prepareStatement(sql)) {</span>
+
+<span class="nc" id="L66">            String searchPattern = &quot;%&quot; + keyword + &quot;%&quot;;</span>
+<span class="nc" id="L67">            stmt.setString(1, searchPattern);</span>
+<span class="nc" id="L68">            stmt.setString(2, searchPattern);</span>
+<span class="nc" id="L69">            stmt.setString(3, searchPattern);</span>
+<span class="nc" id="L70">            stmt.setString(4, searchPattern);</span>
+
+<span class="nc" id="L72">            try (ResultSet rs = stmt.executeQuery()) {</span>
+<span class="nc bnc" id="L73" title="All 2 branches missed.">                while (rs.next()) {</span>
+<span class="nc" id="L74">                    books.add(extractBookFromResultSet(rs));</span>
+                }
+            }
+<span class="nc" id="L77">        } catch (SQLException e) {</span>
+<span class="nc" id="L78">            logger.error(&quot;Failed to search books with keyword: {}&quot;, keyword, e);</span>
+<span class="nc" id="L79">            return new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L80">        }</span>
+<span class="nc" id="L81">        return books;</span>
+    }
+
+    public List&lt;Book&gt; findByCategory(String category) {
+<span class="nc" id="L85">        List&lt;Book&gt; books = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L86">        String sql = SELECT + BOOK_COLUMNS + &quot; FROM books WHERE category = ? ORDER BY title&quot;;</span>
+
+<span class="nc" id="L88">        try (Connection conn = DatabaseConnection.getConnection();</span>
+<span class="nc" id="L89">             PreparedStatement stmt = conn.prepareStatement(sql)) {</span>
+
+<span class="nc" id="L91">            stmt.setString(1, category);</span>
+<span class="nc" id="L92">            try (ResultSet rs = stmt.executeQuery()) {</span>
+<span class="nc bnc" id="L93" title="All 2 branches missed.">                while (rs.next()) {</span>
+<span class="nc" id="L94">                    books.add(extractBookFromResultSet(rs));</span>
+                }
+            }
+<span class="nc" id="L97">        } catch (SQLException e) {</span>
+<span class="nc" id="L98">            logger.error(&quot;Failed to find books by category: {}&quot;, category, e);</span>
+<span class="nc" id="L99">            return new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L100">        }</span>
+<span class="nc" id="L101">        return books;</span>
+    }
+    public List&lt;String&gt; getAllCategories() {
+<span class="nc" id="L104">        List&lt;String&gt; categories = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L105">        String sql = &quot;SELECT DISTINCT category FROM books ORDER BY category&quot;;</span>
+        
+<span class="nc" id="L107">        try (Connection conn = DatabaseConnection.getConnection();</span>
+<span class="nc" id="L108">             Statement stmt = conn.createStatement();</span>
+<span class="nc" id="L109">             ResultSet rs = stmt.executeQuery(sql)) {</span>
+            
+<span class="nc bnc" id="L111" title="All 2 branches missed.">            while (rs.next()) {</span>
+<span class="nc" id="L112">                categories.add(rs.getString(&quot;category&quot;));</span>
+            }
+<span class="nc" id="L114">        } catch (SQLException e) {</span>
+<span class="nc" id="L115">            logger.error(&quot;Failed to load categories&quot;, e);</span>
+<span class="nc" id="L116">            return new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L117">        }</span>
+<span class="nc" id="L118">        return categories;</span>
+    }
+    
+    public boolean create(Book book) {
+<span class="fc" id="L122">        String sql = &quot;INSERT INTO books (title, author, isbn, category, description, publisher, published_year, pages, language, quantity, available_quantity, cover_image) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)&quot;;</span>
+        
+<span class="fc" id="L124">        try (Connection conn = DatabaseConnection.getConnection();</span>
+<span class="fc" id="L125">             PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {</span>
+            
+<span class="fc" id="L127">            stmt.setString(1, book.getTitle());</span>
+<span class="fc" id="L128">            stmt.setString(2, book.getAuthor());</span>
+<span class="fc" id="L129">            stmt.setString(3, book.getIsbn());</span>
+<span class="fc" id="L130">            stmt.setString(4, book.getCategory());</span>
+<span class="fc" id="L131">            stmt.setString(5, book.getDescription());</span>
+<span class="fc" id="L132">            stmt.setString(6, book.getPublisher());</span>
+<span class="fc" id="L133">            stmt.setInt(7, book.getPublishedYear());</span>
+<span class="fc" id="L134">            stmt.setInt(8, book.getPages());</span>
+<span class="fc" id="L135">            stmt.setString(9, book.getLanguage());</span>
+<span class="fc" id="L136">            stmt.setInt(10, book.getQuantity());</span>
+<span class="fc" id="L137">            stmt.setInt(11, book.getAvailableQuantity());</span>
+<span class="fc" id="L138">            stmt.setString(12, book.getCoverImage());</span>
+            
+<span class="fc" id="L140">            int affectedRows = stmt.executeUpdate();</span>
+            
+<span class="fc bfc" id="L142" title="All 2 branches covered.">            if (affectedRows &gt; 0) {</span>
+<span class="fc" id="L143">                ResultSet generatedKeys = stmt.getGeneratedKeys();</span>
+<span class="pc bpc" id="L144" title="1 of 2 branches missed.">                if (generatedKeys.next()) {</span>
+<span class="fc" id="L145">                    book.setId(generatedKeys.getInt(1));</span>
+                }
+<span class="fc" id="L147">                return true;</span>
+            }
+<span class="pc bpc" id="L149" title="2 of 4 branches missed.">        } catch (SQLException e) {</span>
+<span class="fc" id="L150">            logger.error(&quot;Failed to create book: {}&quot;, book.getTitle(), e);</span>
+<span class="fc" id="L151">            return false;</span>
+<span class="fc" id="L152">        }</span>
+<span class="fc" id="L153">        return false;</span>
+    }
+    
+    public boolean update(Book book) {
+<span class="nc" id="L157">        String sql = &quot;UPDATE books SET title = ?, author = ?, isbn = ?, category = ?, description = ?, publisher = ?, published_year = ?, pages = ?, language = ?, quantity = ?, available_quantity = ?, cover_image = ? WHERE id = ?&quot;;</span>
+        
+<span class="nc" id="L159">        try (Connection conn = DatabaseConnection.getConnection();</span>
+<span class="nc" id="L160">             PreparedStatement stmt = conn.prepareStatement(sql)) {</span>
+            
+<span class="nc" id="L162">            stmt.setString(1, book.getTitle());</span>
+<span class="nc" id="L163">            stmt.setString(2, book.getAuthor());</span>
+<span class="nc" id="L164">            stmt.setString(3, book.getIsbn());</span>
+<span class="nc" id="L165">            stmt.setString(4, book.getCategory());</span>
+<span class="nc" id="L166">            stmt.setString(5, book.getDescription());</span>
+<span class="nc" id="L167">            stmt.setString(6, book.getPublisher());</span>
+<span class="nc" id="L168">            stmt.setInt(7, book.getPublishedYear());</span>
+<span class="nc" id="L169">            stmt.setInt(8, book.getPages());</span>
+<span class="nc" id="L170">            stmt.setString(9, book.getLanguage());</span>
+<span class="nc" id="L171">            stmt.setInt(10, book.getQuantity());</span>
+<span class="nc" id="L172">            stmt.setInt(11, book.getAvailableQuantity());</span>
+<span class="nc" id="L173">            stmt.setString(12, book.getCoverImage());</span>
+<span class="nc" id="L174">            stmt.setInt(13, book.getId());</span>
+            
+<span class="nc bnc" id="L176" title="All 2 branches missed.">            return stmt.executeUpdate() &gt; 0;</span>
+<span class="nc" id="L177">        } catch (SQLException e) {</span>
+<span class="nc" id="L178">            logger.error(&quot;Failed to update book ID: {}&quot;, book.getId(), e);</span>
+<span class="nc" id="L179">            return false;</span>
+        }
+    }
+    
+    public boolean delete(int id) {
+<span class="fc" id="L184">        String sql = &quot;DELETE FROM books WHERE id = ?&quot;;</span>
+<span class="fc" id="L185">        try (Connection conn = DatabaseConnection.getConnection();</span>
+<span class="fc" id="L186">             PreparedStatement stmt = conn.prepareStatement(sql)) {</span>
+            
+<span class="fc" id="L188">            stmt.setInt(1, id);</span>
+<span class="fc bfc" id="L189" title="All 2 branches covered.">            return stmt.executeUpdate() &gt; 0;</span>
+<span class="fc" id="L190">        } catch (SQLException e) {</span>
+<span class="fc" id="L191">            logger.error(&quot;Failed to delete book ID: {}&quot;, id, e);</span>
+<span class="fc" id="L192">            return false;</span>
+        }
+    }
+    
+    public boolean decreaseAvailableQuantity(int bookId) {
+<span class="nc" id="L197">        String sql = &quot;UPDATE books SET available_quantity = available_quantity - 1 WHERE id = ? AND available_quantity &gt; 0&quot;;</span>
+<span class="nc" id="L198">        try (Connection conn = DatabaseConnection.getConnection();</span>
+<span class="nc" id="L199">             PreparedStatement stmt = conn.prepareStatement(sql)) {</span>
+            
+<span class="nc" id="L201">            stmt.setInt(1, bookId);</span>
+<span class="nc bnc" id="L202" title="All 2 branches missed.">            return stmt.executeUpdate() &gt; 0;</span>
+<span class="nc" id="L203">        } catch (SQLException e) {</span>
+<span class="nc" id="L204">            logger.error(&quot;Failed to decrease available quantity of book ID: {}&quot;, bookId, e);</span>
+<span class="nc" id="L205">            return false;</span>
+        }
+    }
+    
+    public boolean increaseAvailableQuantity(int bookId) {
+<span class="fc" id="L210">        String sql = &quot;UPDATE books SET available_quantity = available_quantity + 1 WHERE id = ?&quot;;</span>
+<span class="fc" id="L211">        try (Connection conn = DatabaseConnection.getConnection();</span>
+<span class="fc" id="L212">             PreparedStatement stmt = conn.prepareStatement(sql)) {</span>
+            
+<span class="fc" id="L214">            stmt.setInt(1, bookId);</span>
+<span class="fc bfc" id="L215" title="All 2 branches covered.">            return stmt.executeUpdate() &gt; 0;</span>
+<span class="fc" id="L216">        } catch (SQLException e) {</span>
+<span class="fc" id="L217">            logger.error(&quot;Failed to increase available quantity of book ID: {}&quot;, bookId, e);</span>
+<span class="fc" id="L218">            return false;</span>
+        }
+    }
+    
+    public int getTotalBooks() {
+<span class="nc" id="L223">        String sql = &quot;SELECT COUNT(*) FROM books&quot;;</span>
+<span class="nc" id="L224">        try (Connection conn = DatabaseConnection.getConnection();</span>
+<span class="nc" id="L225">             Statement stmt = conn.createStatement();</span>
+<span class="nc" id="L226">             ResultSet rs = stmt.executeQuery(sql)) {</span>
+            
+<span class="nc bnc" id="L228" title="All 2 branches missed.">            if (rs.next()) {</span>
+<span class="nc" id="L229">                return rs.getInt(1);</span>
+            }
+<span class="nc bnc" id="L231" title="All 6 branches missed.">        } catch (SQLException e) {</span>
+<span class="nc" id="L232">            logger.error(&quot;Failed to count total books&quot;, e);</span>
+<span class="nc" id="L233">        }</span>
+<span class="nc" id="L234">        return 0;</span>
+    }
+    
+    public int getAvailableBooks() {
+<span class="nc" id="L238">        String sql = &quot;SELECT COUNT(*) FROM books WHERE available_quantity &gt; 0&quot;;</span>
+<span class="nc" id="L239">        try (Connection conn = DatabaseConnection.getConnection();</span>
+<span class="nc" id="L240">             Statement stmt = conn.createStatement();</span>
+<span class="nc" id="L241">             ResultSet rs = stmt.executeQuery(sql)) {</span>
+            
+<span class="nc bnc" id="L243" title="All 2 branches missed.">            if (rs.next()) {</span>
+<span class="nc" id="L244">                return rs.getInt(1);</span>
+            }
+<span class="nc bnc" id="L246" title="All 6 branches missed.">        } catch (SQLException e) {</span>
+<span class="nc" id="L247">            logger.error(&quot;Failed to count available books&quot;, e);</span>
+<span class="nc" id="L248">        }</span>
+<span class="nc" id="L249">        return 0;</span>
+    }
+    
+    private Book extractBookFromResultSet(ResultSet rs) throws SQLException {
+<span class="fc" id="L253">        Book book = new Book();</span>
+<span class="fc" id="L254">        book.setId(rs.getInt(&quot;id&quot;));</span>
+<span class="fc" id="L255">        book.setTitle(rs.getString(&quot;title&quot;));</span>
+<span class="fc" id="L256">        book.setAuthor(rs.getString(&quot;author&quot;));</span>
+<span class="fc" id="L257">        book.setIsbn(rs.getString(&quot;isbn&quot;));</span>
+<span class="fc" id="L258">        book.setCategory(rs.getString(&quot;category&quot;));</span>
+<span class="fc" id="L259">        book.setDescription(rs.getString(&quot;description&quot;));</span>
+<span class="fc" id="L260">        book.setPublisher(rs.getString(&quot;publisher&quot;));</span>
+<span class="fc" id="L261">        book.setPublishedYear(rs.getInt(&quot;published_year&quot;));</span>
+<span class="fc" id="L262">        book.setPages(rs.getInt(&quot;pages&quot;));</span>
+<span class="fc" id="L263">        book.setLanguage(rs.getString(&quot;language&quot;));</span>
+<span class="fc" id="L264">        book.setQuantity(rs.getInt(&quot;quantity&quot;));</span>
+<span class="fc" id="L265">        book.setAvailableQuantity(rs.getInt(&quot;available_quantity&quot;));</span>
+<span class="fc" id="L266">        book.setCoverImage(rs.getString(&quot;cover_image&quot;));</span>
+<span class="fc" id="L267">        book.setCreatedAt(rs.getTimestamp(&quot;created_at&quot;));</span>
+<span class="fc" id="L268">        book.setUpdatedAt(rs.getTimestamp(&quot;updated_at&quot;));</span>
+<span class="fc" id="L269">        return book;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

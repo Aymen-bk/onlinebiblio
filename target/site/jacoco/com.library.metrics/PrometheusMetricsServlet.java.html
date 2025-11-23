@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PrometheusMetricsServlet.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">online-library</a> &gt; <a href="index.source.html" class="el_package">com.library.metrics</a> &gt; <span class="el_source">PrometheusMetricsServlet.java</span></div><h1>PrometheusMetricsServlet.java</h1><pre class="source lang-java linenums">package com.library.metrics;
+
+import io.micrometer.prometheus.PrometheusMeterRegistry;
+import io.micrometer.prometheus.PrometheusConfig;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
+
+<span class="nc" id="L12">public class PrometheusMetricsServlet extends HttpServlet {</span>
+
+<span class="nc" id="L14">    private final PrometheusMeterRegistry registry = new PrometheusMeterRegistry(PrometheusConfig.DEFAULT);</span>
+
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+<span class="nc" id="L18">        String metrics = registry.scrape();</span>
+<span class="nc" id="L19">        resp.setStatus(HttpServletResponse.SC_OK);</span>
+<span class="nc" id="L20">        resp.setContentType(&quot;text/plain; version=0.0.4&quot;);</span>
+<span class="nc" id="L21">        resp.getWriter().write(metrics);</span>
+<span class="nc" id="L22">    }</span>
+
+    public PrometheusMeterRegistry getRegistry() {
+<span class="nc" id="L25">        return registry;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>
