@@ -6,7 +6,7 @@ pipeline {
         DB_USERNAME = "tarik"
         DB_PASSWORD = "tarik123"
         DB_URL = "jdbc:mysql://host.docker.internal:3306/online_library?useSSL=false&serverTimezone=UTC"
-        KUBECONFIG = "C:\\Users\\PC\\.kube\\config"
+        KUBECONFIG = "C:\\Users\\hp\\.kube\\config"
 
         // Docker
         DOCKER_IMAGE = "onlinebiblio"
