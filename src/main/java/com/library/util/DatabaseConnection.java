@@ -9,7 +9,7 @@ import java.util.logging.Logger;
 public class DatabaseConnection {
 
     // Database URL (can still be hard-coded if it's not sensitive)
-    private static final String URL  = "jdbc:mysql://host.docker.internal:3306/online_library?useSSL=false&serverTimezone=UTC";
+    private static final String URL  = "jdbc:mysql://host.docker.internal:3306/online_library?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC";
     //private static final String URL  = "jdbc:mysql://localhost:3306/online_library?useSSL=false&serverTimezone=UTC";
     private static final Logger LOGGER = Logger.getLogger(DatabaseConnection.class.getName());
 
